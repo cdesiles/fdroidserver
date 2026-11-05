@@ -1,0 +1,21 @@
+#!/bin/sh
+# The image's default command: serve repo/ on port 80 and keep its signed
+# index fresh, with `fdroid update -c` at start then every
+# FDROID_UPDATE_INTERVAL (sleep syntax, default 24h). A failed first update
+# stops the container; a later one leaves the previous index served.
+#
+# httpd serves /var/www/html: mount repo/ read-only on /var/www/html/repo, so
+# that config.yml and the keystore next to it in /fdroid stay out of reach.
+set -eu
+
+interval=${FDROID_UPDATE_INTERVAL:-24h}
+# PID 1 ignores signals it has no handler for: stop at once, not at the timeout
+trap 'exit 0' INT TERM
+
+busybox httpd -f -p 80 -h /var/www/html &
+fdroid update -c
+while :; do
+	sleep "$interval" &
+	wait $!
+	fdroid update -c || echo "fdroid-serve: fdroid update failed, next try in $interval" >&2
+done
