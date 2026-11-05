@@ -54,7 +54,7 @@ python-vagrant==1.0.0
 PyYAML==6.0.3
 qrcode==8.2
 requests==2.34.2
-ruamel.yaml==0.17.21
+ruamel.yaml==0.19.1
 sdkmanager==0.7.2
 smmap==5.0.3
 SQLAlchemy==2.1.8
