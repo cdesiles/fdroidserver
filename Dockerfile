@@ -5,7 +5,7 @@
 # matplotlib/scipy/ipython, apksigner on a desktop JRE (GTK, Mesa). Instead:
 # fdroidserver from PyPI, pinned by requirements.txt; Debian's apksigner jars;
 # a Java runtime cut down by jlink to what keytool, jarsigner and apksigner use.
-FROM docker.io/library/debian:trixie-slim@sha256:f6b08b09a05725f9431502d3b5714f5c4576e82c1a84fa1debe0c24a7e0c3ec4 AS build
+FROM docker.io/library/debian:trixie-slim@sha256:a72b4433de1cf7d6bae0c4cee74d0547f58601a643b3375f070c51600d63b6b2 AS build
 WORKDIR /tmp/debs
 RUN apt-get update \
  && apt-get install -y --no-install-recommends binutils openjdk-21-jdk-headless python3 python3-venv \
@@ -27,7 +27,7 @@ RUN python3 -m venv /opt/fdroidserver \
  && ./pip check \
  && ./pip uninstall --yes babel setuptools pip
 
-FROM docker.io/library/debian:trixie-slim@sha256:f6b08b09a05725f9431502d3b5714f5c4576e82c1a84fa1debe0c24a7e0c3ec4
+FROM docker.io/library/debian:trixie-slim@sha256:a72b4433de1cf7d6bae0c4cee74d0547f58601a643b3375f070c51600d63b6b2
 RUN apt-get update \
  && apt-get install -y --no-install-recommends busybox python3 \
  && rm -rf /var/lib/apt/lists/*
