@@ -1,5 +1,7 @@
 # Weekly pull requests for the base image digest and the Python pins, monthly
 # for the actions. CI builds and checks each one before it can be merged.
+# requirements.txt comes from pip-compile, which Dependabot runs again on
+# requirements.in: the pins move together, within what fdroidserver accepts.
 version: 2
 updates:
   - package-ecosystem: docker

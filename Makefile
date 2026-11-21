@@ -23,12 +23,18 @@ image: ## Build fdroidserver:<version> (PLATFORM=linux/amd64 for another platfor
 check: image ## Build, then run the image on a throwaway repository: key, index, signatures, HTTP
 	CONTAINER=$(CONTAINER) PLATFORM=$(PLATFORM) sh check.sh $(IMAGE)
 
+# requirements.in goes in on stdin and requirements.txt comes out on stdout:
+# the container, as root, writes nothing here. Dependabot runs the same
+# pip-compile, and reads the Python version in the file's header.
 lock: ## Pin the latest fdroidserver and its dependencies in requirements.txt (FDROID=x.y.z for another release)
-	$(CONTAINER) run --rm $(BASE) sh -c ' \
-		export DEBIAN_FRONTEND=noninteractive; \
-		apt-get update -qq && apt-get install -qqy --no-install-recommends python3-venv >/dev/null \
-		&& python3 -m venv /v && /v/bin/pip install -q "fdroidserver$(if $(FDROID),==$(FDROID))" \
-		&& /v/bin/pip freeze' > requirements.txt.new
+	$(CONTAINER) run --rm -i $(BASE) sh -c ' \
+		mkdir /lock && cd /lock \
+		&& sed "$(if $(FDROID),s/^fdroidserver.*/fdroidserver==$(FDROID)/)" >requirements.in \
+		&& export DEBIAN_FRONTEND=noninteractive \
+		&& apt-get update -qq && apt-get install -qqy --no-install-recommends python3-venv >/dev/null \
+		&& python3 -m venv /v && /v/bin/pip install -q --upgrade pip pip-tools \
+		&& CUSTOM_COMPILE_COMMAND="make lock" /v/bin/pip-compile -q --upgrade --strip-extras requirements.in \
+		&& cat requirements.txt' <requirements.in >requirements.txt.new
 	mv requirements.txt.new requirements.txt
 
 clean: ## Remove the downloaded test APK

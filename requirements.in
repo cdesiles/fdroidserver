@@ -1,0 +1,3 @@
+# What the image installs. `make lock`, and Dependabot every week, resolve it
+# with pip-compile into requirements.txt: every package, pinned.
+fdroidserver

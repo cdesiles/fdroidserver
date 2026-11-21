@@ -80,7 +80,7 @@ make check PLATFORM=linux/amd64   # for an x86_64 server, from an arm64 laptop (
 make lock                         # pin the latest fdroidserver and its dependencies
 ```
 
-`CONTAINER=podman` uses podman instead of docker. The pins only move with a passing check: a new androguard has broken fdroidserver before (4.1.4 with fdroidserver 2.4.2).
+`CONTAINER=podman` uses podman instead of docker. `make lock` resolves [requirements.in](requirements.in) into requirements.txt with pip-compile, as Dependabot does each week. The pins only move with a passing check: a new androguard has broken fdroidserver before (4.1.4 with fdroidserver 2.4.2).
 
 ## License
 
