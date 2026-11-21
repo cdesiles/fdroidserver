@@ -33,7 +33,7 @@ cffi==2.1.1
     #   pynacl
 charset-normalizer==3.5.2
     # via requests
-click==8.5.0
+click==8.5.1
     # via androguard
 clint==0.5.1
     # via fdroidserver
@@ -65,7 +65,7 @@ ipython-pygments-lexers==1.1.1
     # via ipython
 jedi==0.20.1
     # via ipython
-loguru==0.7.3
+loguru==0.8.0
     # via androguard
 looseversion==1.3.0
     # via sdkmanager
@@ -93,7 +93,7 @@ pexpect==4.9.0
     # via ipython
 pillow==13.0.0
     # via fdroidserver
-platformdirs==4.14.5
+platformdirs==4.14.7
     # via fdroidserver
 prompt-toolkit==3.0.53
     # via ipython
@@ -103,7 +103,7 @@ ptyprocess==0.7.0
     # via pexpect
 pure-eval==0.2.4
     # via stack-data
-puremagic==2.2.0
+puremagic==2.3.0
     # via fdroidserver
 pycparser==3.12
     # via cffi
@@ -138,7 +138,7 @@ sdkmanager==0.7.2
     # via fdroidserver
 smmap==5.0.3
     # via gitdb
-sqlalchemy==2.1.8
+sqlalchemy==2.1.9
     # via
     #   alembic
     #   dataset
