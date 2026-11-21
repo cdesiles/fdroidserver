@@ -64,7 +64,7 @@ To index new APKs right away: `docker compose exec fdroid fdroid update -c`. Any
 
 ## Tags
 
-On every commit to `main`, GitHub Actions builds the image, checks it on a throwaway repository (signing key, a real APK indexed, signatures, HTTP) and publishes:
+On every commit to `main`, and every Monday for Debian's security fixes, GitHub Actions builds the image from scratch, checks it on a throwaway repository (signing key, a real APK indexed, signatures, HTTP) and publishes:
 
 - `<fdroidserver version>-<build>`, e.g. `2.4.5-1`: one per build, to pin;
 - `<fdroidserver version>` and `latest`: the newest build.

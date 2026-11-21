@@ -2,12 +2,16 @@ name: image
 
 # Pull requests: build and check. main: build, check, then publish
 # ghcr.io/<owner>/fdroidserver:<fdroidserver version>-<build>, :<fdroidserver
-# version> and :latest, for linux/amd64 and linux/arm64. A manual run on main
-# publishes a new build of the same commit, e.g. for Debian security fixes.
+# version> and :latest, for linux/amd64 and linux/arm64. Every Monday, and on
+# a manual run, main is built and published again: Debian's security fixes
+# get in even when this repository doesn't change. No build cache, then: its
+# apt-get layers would keep an older build's packages.
 on:
   push:
     branches: [main]
   pull_request:
+  schedule:
+    - cron: "17 4 * * 1"
   workflow_dispatch:
 
 permissions:
@@ -39,8 +43,6 @@ jobs:
           context: .
           load: true
           tags: fdroidserver:check
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Check
         run: sh check.sh fdroidserver:check
@@ -75,4 +77,3 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
-          cache-from: type=gha
