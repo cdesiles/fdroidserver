@@ -1,5 +1,7 @@
 # Weekly pull requests for the base image digest and the Python pins, monthly
-# for the actions. CI builds and checks each one before it can be merged.
+# for the actions. CI builds and checks each one, and auto-merge.yml merges
+# those that pass. fdroidserver has pull requests of its own: a new minor or
+# major release waits there for a review, without holding the other pins.
 # requirements.txt comes from pip-compile, which Dependabot runs again on
 # requirements.in: the pins move together, within what fdroidserver accepts.
 version: 2
@@ -15,6 +17,7 @@ updates:
     groups:
       python:
         patterns: ["*"]
+        exclude-patterns: [fdroidserver]
   - package-ecosystem: github-actions
     directory: /
     schedule:

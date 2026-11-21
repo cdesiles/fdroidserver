@@ -69,7 +69,7 @@ On every commit to `main`, and every Monday for Debian's security fixes, GitHub 
 - `<fdroidserver version>-<build>`, e.g. `2.4.5-1`: one per build, to pin;
 - `<fdroidserver version>` and `latest`: the newest build.
 
-Dependabot proposes updates of the base image, the Python pins and the actions, and each of its pull requests goes through the same build and check.
+Dependabot proposes updates of the base image, the Python pins and the actions. Each of its pull requests goes through the same build and check, then is merged and published, except a new fdroidserver minor or major release: that one waits for a review of its changelog.
 
 ## Building
 

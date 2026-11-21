@@ -1,0 +1,51 @@
+name: auto-merge
+
+# Once the image workflow passes on a Dependabot pull request: merge it, then
+# publish main. A new fdroidserver minor or major release waits instead, for
+# its changelog to be read: merge it by hand.
+#
+# No code from the pull request runs here, with this job's write access. And a
+# merge with this job's token triggers no push workflow, so image.yml is run
+# on main explicitly, to publish.
+on:
+  workflow_run:
+    workflows: [image]
+    types: [completed]
+
+permissions: {}
+
+jobs:
+  merge:
+    if: >-
+      github.event.workflow_run.event == 'pull_request'
+      && github.event.workflow_run.conclusion == 'success'
+      && github.event.workflow_run.actor.login == 'dependabot[bot]'
+      && github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Merge, then publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR: ${{ github.event.workflow_run.pull_requests[0].number }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          [ -n "$PR" ] || { echo "No pull request for $SHA"; exit 0; }
+          # Still open, still Dependabot's, still at the commit that passed
+          state=$(gh api "repos/$GH_REPO/pulls/$PR" --jq '[.state, .user.login, .head.sha] | join(" ")')
+          [ "$state" = "open dependabot[bot] $SHA" ] || { echo "#$PR: $state, left as is"; exit 0; }
+          diff=$(gh pr diff "$PR")
+          old=$(printf '%s\n' "$diff" | sed -n 's/^-fdroidserver==\([0-9]*\.[0-9]*\).*/\1/p')
+          new=$(printf '%s\n' "$diff" | sed -n 's/^+fdroidserver==\([0-9]*\.[0-9]*\).*/\1/p')
+          if [ "$old" != "$new" ]; then
+            echo "::notice::#$PR: fdroidserver $old to $new, left for a review"
+            exit 0
+          fi
+          # A change to a workflow file may be refused to this job's token
+          gh pr merge "$PR" --squash --match-head-commit "$SHA" ||
+            { echo "::error::#$PR: not merged, merge it by hand"; exit 1; }
+          gh workflow run image.yml --ref main
