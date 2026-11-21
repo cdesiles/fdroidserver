@@ -14,6 +14,10 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    # requirements.in lists fdroidserver alone: the rest of requirements.txt
+    # is indirect, which Dependabot leaves alone by default
+    allow:
+      - dependency-type: all
     groups:
       python:
         patterns: ["*"]
